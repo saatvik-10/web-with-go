@@ -5,16 +5,27 @@ import (
 	"net/http"
 )
 
+const PORT = ":8080"
+
+func Home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "This is the Home Page")
+}
+
+func About(w http.ResponseWriter, r *http.Request) {
+	sum := addValues(2, 2)
+	fmt.Fprintf(w, "The ans is %d", sum)
+}
+
+func addValues(x, y int) int {
+	return x + y
+}
+
 func main() {
-	//creating a handler function for http
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		n, err := fmt.Fprintf(w, "Hello World")
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(fmt.Sprintf("Number of bytes written: %d", n)) //%d is a placeholder to be replaced by the value of n, Sprintf to convert the value of n to a string
-	})
+	http.HandleFunc("/", Home)
+	http.HandleFunc("/about", About)
+
+	fmt.Println(fmt.Sprintf("Server running on port %s", PORT))
 
 	//starting the server
-	_ = http.ListenAndServe(":8080", nil) //the underscore is used to ignore the error returned by ListenAndServe
+	_ = http.ListenAndServe(PORT, nil) //the underscore is used to ignore the error returned by ListenAndServe
 }
