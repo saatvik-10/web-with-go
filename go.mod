@@ -1,3 +1,3 @@
-module github.com/saatvik-10/web-with-go.git
+module web-with-go
 
 go 1.23.6

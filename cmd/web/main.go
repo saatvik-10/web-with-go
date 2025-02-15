@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"web-with-go/pkg/handlers"
 )
 
 const PORT = ":8080"
 
 func main() {
-	http.HandleFunc("/", Home)
-	http.HandleFunc("/about", About)
+	http.HandleFunc("/", handlers.Home)
+	http.HandleFunc("/about", handlers.About)
 
 	fmt.Println(fmt.Sprintf("Server running on port %s", PORT))
 
