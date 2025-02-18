@@ -2,34 +2,49 @@ package render
 
 import (
 	"bytes"
-//	"fmt"
+    "web-with-go/pkg/config"
+
+    //	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
 )
 
+var app *config.AppConfig
+
+//NetTemplates sets the config for the template package
+func NewTemplate(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, html string) {
-	//get the template cache from the app config
+	var tc map[string]*template.Template
+
+
+	//in dev mode, don't use template cache instead rebuild it on every req.
+	if app.UseCache {
+		//get the template cache from the app config
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
+	}
 
 	//create a template cache
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal("Error parsing template", err)
-	}
+//	tc, err := CreateTemplateCache()
+//	if err != nil {
+//		log.Fatal("Error parsing template", err)
+//	}
 
 	//get req. template from cache
 	t, ok := tc[html]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("could not get template from template cache")
 	}
 
 	buf := new(bytes.Buffer) //in-memory writer
 
-	err = t.Execute(buf, nil)
-	if err != nil {
-		log.Println(err)
-	}
+	_ = t.Execute(buf, nil)
 
 	//render the template
 //	parsedTemplate, _ := template.ParseFiles("./templates/"+html, "./templates/base.layout.html")
@@ -38,7 +53,7 @@ func RenderTemplate(w http.ResponseWriter, html string) {
 //		fmt.Println("error parsing template: ", err)
 //		return
 //	}
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
 	}
