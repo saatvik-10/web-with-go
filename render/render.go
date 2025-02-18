@@ -22,7 +22,7 @@ func RenderTemplate(w http.ResponseWriter, html string) {
 		log.Fatal(err)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := new(bytes.Buffer) //in-memory writer
 
 	err = t.Execute(buf, nil)
 	if err != nil {
