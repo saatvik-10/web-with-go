@@ -2,9 +2,10 @@ package render
 
 import (
 	"bytes"
-    "web-with-go/pkg/config"
+	"web-with-go/pkg/config"
+	"web-with-go/pkg/models"
 
-    //	"fmt"
+	//	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -18,9 +19,13 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, html string) {
-	var tc map[string]*template.Template
+//add template data to every page automatically and not manually
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
 
+func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData) {
+	var tc map[string]*template.Template
 
 	//in dev mode, don't use template cache instead rebuild it on every req.
 	if app.UseCache {
@@ -31,10 +36,10 @@ func RenderTemplate(w http.ResponseWriter, html string) {
 	}
 
 	//create a template cache
-//	tc, err := CreateTemplateCache()
-//	if err != nil {
-//		log.Fatal("Error parsing template", err)
-//	}
+	//	tc, err := CreateTemplateCache()
+	//	if err != nil {
+	//		log.Fatal("Error parsing template", err)
+	//	}
 
 	//get req. template from cache
 	t, ok := tc[html]
@@ -44,15 +49,17 @@ func RenderTemplate(w http.ResponseWriter, html string) {
 
 	buf := new(bytes.Buffer) //in-memory writer
 
-	_ = t.Execute(buf, nil)
+	td = AddDefaultData(td)
+
+	_ = t.Execute(buf, td)
 
 	//render the template
-//	parsedTemplate, _ := template.ParseFiles("./templates/"+html, "./templates/base.layout.html")
-//	err := parsedTemplate.Execute(w, nil)
-//	if err != nil {
-//		fmt.Println("error parsing template: ", err)
-//		return
-//	}
+	//	parsedTemplate, _ := template.ParseFiles("./templates/"+html, "./templates/base.layout.html")
+	//	err := parsedTemplate.Execute(w, nil)
+	//	if err != nil {
+	//		fmt.Println("error parsing template: ", err)
+	//		return
+	//	}
 	_, err := buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
@@ -92,7 +99,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	}
 	return myCache, nil
 }
-
 
 //var tc = make(map[string]*template.Template)
 
@@ -137,5 +143,3 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 //
 //	return nil
 //}
-
-

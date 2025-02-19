@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"web-with-go/pkg/config"
+	"web-with-go/pkg/models"
 	"web-with-go/pkg/render"
 )
 
@@ -16,9 +17,9 @@ type Repository struct {
 }
 
 //creates a new repository
-func NewRepo(a *config.AppConfig) *Repository{
+func NewRepo(a *config.AppConfig) *Repository {
 	return &Repository{
-		App:a,
+		App: a,
 	}
 }
 
@@ -29,9 +30,15 @@ func NewHandlers(r *Repository) {
 
 //putting the reveivers will grant to the persmission to access everything inside the repository
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.html")
+	render.RenderTemplate(w, "home.page.html", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.html")
+	//perform a logic here
+	stringMap := make(map[string]string)
+	stringMap["test"] = "Hello World!"
+
+	render.RenderTemplate(w, "about.page.html", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
