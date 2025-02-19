@@ -6,6 +6,8 @@ import (
 	"web-with-go/pkg/render"
 )
 
+//Repository structure is used when we connect the databases, it is used to share the connection pool
+
 //Repo the repository used by the handlers
 var Repo *Repository
 
@@ -20,11 +22,12 @@ func NewRepo(a *config.AppConfig) *Repository{
 	}
 }
 
-//Setrs the repository for new handlers
-func NewHandlers(r * Repository) {
+//Sets the repository for new handlers
+func NewHandlers(r *Repository) {
 	Repo = r
 }
 
+//putting the reveivers will grant to the persmission to access everything inside the repository
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, "home.page.html")
 }
