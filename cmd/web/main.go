@@ -27,11 +27,13 @@ func main() {
 
 	render.NewTemplate(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
-
 	fmt.Println(fmt.Sprintf("Server running on port %s", PORT))
 
-	//starting the server
-	_ = http.ListenAndServe(PORT, nil) //the underscore is used to ignore the error returned by ListenAndServe
+	srv := &http.Server {
+		Addr : PORT,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 }
