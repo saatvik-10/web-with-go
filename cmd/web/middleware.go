@@ -16,9 +16,9 @@ func WriteToConsole(next http.Handler) http.Handler {
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
-	csrfHandler.SetBaseCookie(http.Cookie{
+	csrfHandler.SetBaseCookie(http.Cookie{ //token generated is available on per page bases
 		HttpOnly: true,
-		Path:     "/",
+		Path:     "/", //makes cookie available to the entire site
 		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	})
